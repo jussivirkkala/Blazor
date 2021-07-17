@@ -34,37 +34,42 @@
 <br>
 @if (header != null)
 {
-    <label>
-        version: @header.version
-        <br>patient: @header.patient
-        <br>recording: @header.recording
-        <br>startdate (dd.mm.yy): @header.startdate
-        <br>starttime (hh.mm.ss): @header.starttime
-        <br>headerlength (256+signals*256): @header.headerlength
-        <br>reserved 44: @header.reserved44
-        <br>data records (-1 if unknown): @header.records
-        <br>record duration (s): @header.duration
-        <br>number of signals: @header.signals
-    </label>
+<label>
+    version: @header.version
+    <br>patient: @header.patient
+    <br>recording: @header.recording
+    <br>startdate (dd.mm.yy): @header.startdate
+    <br>starttime (hh.mm.ss): @header.starttime
+    <br>headerlength (256+signals*256): @header.headerlength
+    <br>reserved 44: @header.reserved44
+    <br>data records (-1 if unknown): @header.records
+    <br>record duration (s): @header.duration
+    <br>number of signals: @header.signals
+</label>
 }
 
 @if (signals != null)
 {
-    @foreach (var signal in signals)
+@foreach (var signal in signals)
     {
-        <br>
-        <label>
-            label (dimension): @signal.label (@signal.dimension)
-            <br>transducer type: @signal.transducer
-            <br>physical min max: @signal.physicalMin @signal.physicalMax
-            <br>physical min max: @signal.digitalMin @signal.digitalMax
-            <br>prefiltering: @signal.prefiltering
-            <br>samples: @signal.samples
-            <br>reserved: @signal.reserved32
-        </label>
+<br>
+<label>
+    label (dimension): @signal.label (@signal.dimension)
+    <br>transducer type: @signal.transducer
+    <br>physical min max: @signal.physicalMin @signal.physicalMax
+    <br>physical min max: @signal.digitalMin @signal.digitalMax
+    <br>prefiltering: @signal.prefiltering
+    <br>samples: @signal.samples
+    <br>reserved: @signal.reserved32
+</label>
     }
 }
-<br>Displaying EDF <a href="https://www.edfplus.info/specs/edf.html">https://www.edfplus.info/specs/edf.html</a> header info. Based on Blazor WASM with progressive web app for offline. File is analyzed locally. https://www.github.com/jussivirkkala/edf
+<br>
+<a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read 
+<a href="https://www.edfplus.info/">https://www.edfplus.info/</a>  header information. 
+Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. 
+App is hosted on <a href="https://www.virkkala.net/blazor/edf">https://www.virkkala.net/blazor/edf</a> and 
+source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://github.com/jussivirkkala/BlazorEDF</a>
 
 @code {
     const int MAXSIZE = 1000000000;
@@ -154,7 +159,4 @@
             signals[j].reserved32 = System.Text.Encoding.UTF8.GetString(bytes, i, 32); i += 32;
         }
     }
-
 }
-
-// End
