@@ -2,11 +2,13 @@
 
 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/BlazorEDF.
 
-There are minimal changes to 
+![EDF-1](EDF-0.png)
+
+There are minimal changes to default Blozor template in Visual Studio 2019.
 
 ![EDF-1](EDF-1.png)
 
-Extra navigation are commented out using `@*` in MainLayout.razor
+Extra navigation are commented out using `@*` in MainLayout.razor.
 
 ```
 @inherits LayoutComponentBase
