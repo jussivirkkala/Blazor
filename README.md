@@ -2,6 +2,7 @@
 
 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/BlazorEDF.
 
+- 2021-07-18 Corrected Digital label. Max file size 5 GB and 256 channels.
 
 Install as PWA by clicking end of browser address bar.
 
