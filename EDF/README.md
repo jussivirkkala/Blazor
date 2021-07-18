@@ -14,7 +14,7 @@ Select EDF file e.g. from https://physionet.org/about/database/
 
 # Code
 
-There are minimal changes to default Blazor template in Visual Studio 2019. You can also you dotnet CLI to compile app.
+There are minimal changes to default Blazor template in Visual Studio 2019. You can also use dotnet CLI to compile app.
 
 ![EDF-1](EDF-1.png)
 
