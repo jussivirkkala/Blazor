@@ -47,7 +47,11 @@ All other changes are done into Index.razor
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2021-07-17 First version
+    - Display sampling rate.
+    - Support EDF+
+    - Display events.
+    2021-07-18 Corrected digital label. Max file size 5 GB, 256 channels.
+    2021-07-17 First version.
 
     https://www.edfplus.info/specs/edf.html
     HEADER RECORD (we suggest to also adopt the 12 simple additional EDF+ specs)
@@ -102,7 +106,7 @@ All other changes are done into Index.razor
     label (dimension): @signal.label (@signal.dimension)
     <br>transducer type: @signal.transducer
     <br>physical min max: @signal.physicalMin @signal.physicalMax
-    <br>physical min max: @signal.digitalMin @signal.digitalMax
+    <br>digital min max: @signal.digitalMin @signal.digitalMax
     <br>prefiltering: @signal.prefiltering
     <br>samples: @signal.samples
     <br>reserved: @signal.reserved32
@@ -117,7 +121,7 @@ App is hosted on <a href="https://www.virkkala.net/blazor/edf">https://www.virkk
 source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://github.com/jussivirkkala/BlazorEDF</a>
 
 @code {
-    const int MAXSIZE = 1000000000;
+    const long MAXSIZE = 5000000000; // 5 GB
     private edfHeader header;
     private edfSignal[] signals;
     private bool signals_ready = false;
@@ -155,7 +159,7 @@ source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://gith
         header = new edfHeader();
         IBrowserFile file = e.File;
         // Header 256 bytes
-        var bytes = new byte[256 + 100 * 256];
+        var bytes = new byte[256 + 256 * 256]; // Max 256 channels
         int i = 0;
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
         header.version = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
@@ -205,7 +209,6 @@ source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://gith
         }
     }
 }
-
 ```
 
 In wwwroot index.html has changes for hosting
