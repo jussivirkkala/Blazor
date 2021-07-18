@@ -2,9 +2,10 @@
 
 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor.
 
+- 2021-07-19 Adding version date.
 - 2021-07-18 Corrected Digital label. Max file size 5 GB and 256 channels.
 
-Install as PWA by clicking end of browser address bar.
+Install as PWA by clicking icon in end of browser address bar.
 
 ![EDF-1](EDF-0.png)
 
@@ -14,7 +15,7 @@ Select EDF file e.g. from https://physionet.org/about/database/
 
 # Code
 
-There are minimal changes to default Blazor template in Visual Studio 2019. You can also use dotnet CLI to compile app.
+There are minimal changes to default Blazor template in Visual Studio 2019. 
 
 ![EDF-1](EDF-1.png)
 
@@ -211,11 +212,11 @@ source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://gith
 }
 ```
 
-In wwwroot index.html has changes for hosting
+In wwwroot index.html has changes for hosting. In local testing use /.
 ```
 <base href="/blazor/edf/" />
 ```
-and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0#disable-integrity-checking-for-pwas 
+and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0#disable-integrity-checking-for-pwas.
 ```
 .map(asset => new Request(asset.url));
 ```
