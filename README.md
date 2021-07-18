@@ -1,3 +1,3 @@
 #  [EDF](EDF/)
 
-EDF header view.
+Blazor app for viewing EDF header.
