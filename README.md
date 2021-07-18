@@ -7,9 +7,13 @@ Install as PWA by clicking end of browser address bar.
 
 ![EDF-1](EDF-0.png)
 
+Select EDF file e.g. from https://physionet.org/about/database/
+
+![EDF-2](EDF-2.png)
+
 # Code
 
-There are minimal changes to default Blozor template in Visual Studio 2019.
+There are minimal changes to default Blazor template in Visual Studio 2019.
 
 ![EDF-1](EDF-1.png)
 
@@ -203,4 +207,12 @@ source code in <a href="https://github.com/jussivirkkala/BlazorEDF">https://gith
 
 ```
 
-End
+In wwwroot index.html has changes for hosting
+```
+<base href="/blazor/edf/" />
+```
+and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0#disable-integrity-checking-for-pwas 
+```
+.map(asset => new Request(asset.url));
+```
+
