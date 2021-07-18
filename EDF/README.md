@@ -1,6 +1,6 @@
 # EDF
 
-Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor/EDF.
+Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor.
 
 - 2021-07-18 Corrected Digital label. Max file size 5 GB and 256 channels.
 
@@ -14,7 +14,7 @@ Select EDF file e.g. from https://physionet.org/about/database/
 
 # Code
 
-There are minimal changes to default Blazor template in Visual Studio 2019.
+There are minimal changes to default Blazor template in Visual Studio 2019. You can also you dotnet CLI to compile app.
 
 ![EDF-1](EDF-1.png)
 
