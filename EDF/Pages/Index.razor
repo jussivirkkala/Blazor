@@ -5,6 +5,7 @@
     - Display sampling rate.
     - Support EDF+
     - Display events.
+    2021-07-20 BDF, .ASCII encoding, calculate file duration, sampling rate, check version.
     2021-07-19 Path www.github.com/jussivirkkala/Blazor.
     2021-07-18 Corrected digital label. Max file size 5 GB, 256 channels.
     2021-07-17 First version.
@@ -35,22 +36,22 @@
 
 <InputFile id="inputDefault"
            OnChange="OnFileSelection"
-           accept=".edf,.rec" />
+           accept=".edf,.rec,.bdf" />
 <br>
 @if (header != null)
 {
-    <label>
-        version: @header.version
-        <br>patient: @header.patient
-        <br>recording: @header.recording
-        <br>startdate (dd.mm.yy): @header.startdate
-        <br>starttime (hh.mm.ss): @header.starttime
-        <br>headerlength (256+signals*256): @header.headerlength
-        <br>reserved 44: @header.reserved44
-        <br>data records (-1 if unknown): @header.records
-        <br>record duration (s): @header.duration 
-        <br>number of signals: @header.signals
-    </label>
+<label>
+    version: @header.version
+    <br>patient: @header.patient
+    <br>recording: @header.recording
+    <br>start date (dd.mm.yy): @header.startdate
+    <br>start time (hh.mm.ss): @header.starttime
+    <br>header length (256+signals*256): @header.headerlength
+    <br>reserved 44: @header.reserved44
+    <br>data records (-1 if unknown): @header.records
+    <br>record duration (s): @header.duration ; file duration (h): @(header.length.ToString("F2")) 
+    <br>number of signals: @header.signals
+</label>
 }
 
 @if (signals != null)
@@ -64,20 +65,20 @@
             <br>physical min max: @signal.physicalMin @signal.physicalMax
             <br>digital min max: @signal.digitalMin @signal.digitalMax
             <br>prefiltering: @signal.prefiltering
-            <br>samples: @signal.samples
+            <br>samples: @signal.samples ; sampling rate (Hz): @(signal.samplingrate.ToString("F4"))
             <br>reserved: @signal.reserved32
         </label>
     }
 }
 <br>
-2021-07-19 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read
-<a href="https://www.edfplus.info/">https://www.edfplus.info/</a>  header information.
+2021-07-20 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read
+<a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
 Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://www.virkkala.net/blazor/edf">https://www.virkkala.net/blazor/edf</a> and
 source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.com/jussivirkkala/Blazor</a>
 
 @code {
-    const long MAXSIZE = 5000000000; // 5 GB
+    const long MAXSIZE = 4294967296; // 4 GB, FAT32 limit
     private edfHeader header;
     private edfSignal[] signals;
 
@@ -93,8 +94,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         public string records { get; set; }
         public string duration { get; set; }
         public string signals { get; set; }
-        public float length { get; set; }
-
+        public double length { get; set; }
     }
 
     public class edfSignal
@@ -109,70 +109,87 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         public string prefiltering { get; set; }
         public string samples { get; set; }
         public string reserved32 { get; set; }
+        public double samplingrate { get; set; }
     }
 
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
         header = new edfHeader();
+        if (signals !=null) signals = null;
         IBrowserFile file = e.File;
         // Header 256 bytes
         var bytes = new byte[256 + 256 * 256]; // Max 256 channels
         int i = 0;
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
-        header.version = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.patient = System.Text.Encoding.UTF8.GetString(bytes, i, 80); i += 80;
-        header.recording = System.Text.Encoding.UTF8.GetString(bytes, i, 80); i += 80;
-        header.startdate = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.starttime = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.headerlength = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.reserved44 = System.Text.Encoding.UTF8.GetString(bytes, i, 44); i += 44;
-        header.records = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.duration = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
-        header.signals = System.Text.Encoding.UTF8.GetString(bytes, i, 4); i += 4;
-        int n = Int32.Parse(header.signals);
+        header.version = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
+        if (header.version.CompareTo("0       ") != 0)
+        {
+            // header.version = "Not correct EDF/BDF file";
+            // return;
+        }
+        header.patient = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
+        header.recording = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
+        header.startdate = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
+        header.starttime = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
+        header.headerlength = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
+        header.reserved44 = System.Text.Encoding.ASCII.GetString(bytes, i, 44); i += 44;
+        header.records = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
+        header.duration = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
+        header.signals = System.Text.Encoding.ASCII.GetString(bytes, i, 4); i += 4;
+        uint n = UInt32.Parse(header.signals);
+        double duration = Double.Parse(header.duration); // signal record duration, usually 1 s
+        uint r = UInt32.Parse(header.records);
+        header.length = duration*r / 3600.0;
 
         signals = new edfSignal[n];
         int j;
         for (j = 0; j < n; j += 1)
         {
             signals[j] = new edfSignal();
-            signals[j].label = System.Text.Encoding.UTF8.GetString(bytes, i, 16); i += 16;
+            signals[j].label = System.Text.Encoding.ASCII.GetString(bytes, i, 16); i += 16;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].transducer = System.Text.Encoding.UTF8.GetString(bytes, i, 80); i += 80;
+            signals[j].transducer = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].dimension = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].dimension = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].physicalMin = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].physicalMin = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].physicalMax = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].physicalMax = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].digitalMin = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].digitalMin = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].digitalMax = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].digitalMax = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].prefiltering = System.Text.Encoding.UTF8.GetString(bytes, i, 80); i += 80;
+            signals[j].prefiltering = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].samples = System.Text.Encoding.UTF8.GetString(bytes, i, 8); i += 8;
+            signals[j].samples = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
+            uint s = UInt16.Parse(signals[j].samples);
+            signals[j].samplingrate = s / duration;
         }
         for (j = 0; j < n; j += 1)
         {
-            signals[j].reserved32 = System.Text.Encoding.UTF8.GetString(bytes, i, 32); i += 32;
+            signals[j].reserved32 = System.Text.Encoding.ASCII.GetString(bytes, i, 32); i += 32;
         }
     }
+
 }
+
+@* End *@
+
+
