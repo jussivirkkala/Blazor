@@ -43,7 +43,7 @@ Extra navigation are commented out using `@*` in MainLayout.razor.
     </div>
 </div>
 ``` 
-All other changes are done into Index.razor  [Index.razor](Index.razor)
+All other changes are done into Index.razor  [Index.razor](Pages/Index.razor)
 ```
 @page "/"
 @*
