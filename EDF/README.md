@@ -6,13 +6,13 @@ Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplu
 
 Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf 
 
-![EDF-2](EDF-2.png)
+![EDF-2](EDF-1.png)
+
+You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.edf.txt)
 
 # Code
 
 There are minimal changes to default Blazor template in Visual Studio 2019. 
-
-![EDF-1](EDF-1.png)
 
 Extra navigation are commented out using `@*` in MainLayout.razor.
 
@@ -44,8 +44,11 @@ Other changes are done into Index.razor [Index.razor](Pages/Index.razor)
 @*
     Displaying EDF file header information
     @jussivirkkala
+    - Support EDF+
+    - Display EDF+ events.
+    2021-07-23 No decimals for fixed sampling rate, length as hh:mm:ss. Displaying modified, size. Two buttons
     2021-07-22 Adding length, sampling rate to clipboard. Corrected clipboard.
-    2021-07-21 Resetting signals. Using ParseTry, Invariant, download, clipboard.
+    2021-07-21 Resetting signals. Using ParseTry, download, clipboard.
     2021-07-20 BDF, .ASCII encoding, calculate file duration, sampling rate, check version.
     2021-07-19 Version date. Path www.github.com/jussivirkkala/Blazor.
     2021-07-18 Corrected digital label. Max file size 5 GB, 256 channels.
@@ -81,44 +84,45 @@ Other changes are done into Index.razor [Index.razor](Pages/Index.razor)
 <br>
 @if (header != null)
 {
-    <label>
-        version: @header.version
-        <br>patient: @header.patient
-        <br>recording: @header.recording
-        <br>start date (dd.mm.yy): @header.startdate
-        <br>start time (hh.mm.ss): @header.starttime
-        <br>header length (256+signals*256): @header.headerlength
-        <br>reserved 44 (EDF+C EDF+D): @header.reserved44
-        <br>data records (-1 if unknown): @header.records
-        <br>record duration (s): @header.duration; file duration (h): @(header.length.ToString("F2", CultureInfo.InvariantCulture))
-        <br>number of signals: @header.signals
-    </label>
+<label>
+    Modified: @header.modified Size: @header.size
+    <br/>Version: @header.version
+    <br/>Patient: @header.patient
+    <br/>Recording: @header.recording
+    <br>Start date (dd.mm.yy): @header.startdate
+    <br>Start time (hh.mm.ss): @header.starttime
+    <br>Header length: @header.headerlength
+    <br>Reserved: @header.reserved44
+    <br>Data records: @header.records
+    <br>Record duration (s): @header.duration; File duration (hh:mm:ss): @TimeSpan.FromSeconds(header.length).TotalHours.ToString("00"):@TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss")
+    <br>Number of signals: @header.signals
+</label>
 
 }
 
 @if (signals != null)
 {
     <br/>
-    <button @onclick="saveFile">Clipboard</button>
+    <button @onclick="CtrlC">Ctrl+C</button> <button @onclick="saveFile">@(header.filename).txt</button>
 
     @foreach (var signal in signals)
     {
         <br>
         <label>
-            label (dimension): @signal.label (@signal.dimension)
-            <br>transducer type: @signal.transducer
-            <br>physical min max: @signal.physicalMin @signal.physicalMax
-            <br>digital min max: @signal.digitalMin @signal.digitalMax
-            <br>prefiltering: @signal.prefiltering
-            <br>samples: @signal.samples; sampling rate (Hz): @(signal.samplingrate.ToString("F4", CultureInfo.InvariantCulture))
-            <br>reserved: @signal.reserved32
+            Label (dimension): @signal.label (@signal.dimension)
+            <br>Transducer type: @signal.transducer
+            <br>Physical min max: @signal.physicalMin @signal.physicalMax
+            <br>Pigital min max: @signal.digitalMin @signal.digitalMax
+            <br>Prefiltering: @signal.prefiltering
+            <br>Samples: @signal.samples; Sampling rate (Hz): @signal.samplingrate.ToString("0.####", CultureInfo.InvariantCulture)
+            <br>Reserved: @signal.reserved32
         </label>
     }
-}
+            }
 <br>
-2021-07-22 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+2021-07-23 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
-Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally.
+Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://www.virkkala.net/blazor/edf">https://www.virkkala.net/blazor/edf</a> and
 source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.com/jussivirkkala/Blazor</a>
 
@@ -127,10 +131,12 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
     private edfHeader header;
     private edfSignal[] signals;
     private string txt;
-    private string filename;
 
     public class edfHeader
     {
+        public string filename { get; set; }
+        public string modified { get; set; }
+        public string size { get; set; }
         public string version { get; set; }
         public string patient { get; set; }
         public string recording { get; set; }
@@ -164,17 +170,22 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         header = new edfHeader();
         if (signals != null) signals = null;
         IBrowserFile file = e.File;
-        filename = e.File.Name;
+        header.filename = e.File.Name;
 
         // Header 256 bytes
         var bytes = new byte[256 + 256 * 256]; // Max 256 channels
         int i = 0;
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
         const string LF = "\r\n";
-        txt = "File\t" + filename+ LF;
-        txt += "Modified\t" + e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss") + LF;
-        txt += "Size\t" + e.File.Size.ToString() + LF;
+        txt = "File\t" + header.filename+ LF;
         string s;
+        s = e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss");
+        header.modified = s;
+        txt += "Modified\t" +  s+ LF;
+        s = e.File.Size.ToString();
+        header.size=s;
+        txt += "Size\t" + s + LF;
+
         s = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         header.version = s;
         txt +="Version\t"+s+LF;
@@ -206,7 +217,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         txt += "Records\t" + s + LF;
         s= System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
         header.duration = s;
-        txt += "Duration\t" + s + LF;
+        txt += "Record duration\t" + s + LF;
         s= System.Text.Encoding.ASCII.GetString(bytes, i, 4); i += 4;
         header.signals = s;
         txt += "Signals\t" + s + LF;
@@ -216,11 +227,11 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         {
             // duration = Double.Parse(header.duration); // signal record duration, usually 1 s
             uint r = UInt32.Parse(header.records);
-            header.length = duration * r / 3600.0;
+            header.length = duration * r ;
         }
         else
             header.length = -1;
-        txt += "Length (h)\t" + header.length.ToString("F2",CultureInfo.InvariantCulture) + LF;
+        txt += "File duration (hh:mm:ss)\t" + TimeSpan.FromSeconds(header.length).TotalHours.ToString("00")+":"+TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss")+LF;
 
         signals = new edfSignal[n];
         int j;
@@ -270,7 +281,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
         for (j = 0; j < n; j += 1)
         {
             txt += signals[j].label.TrimEnd() + "\t"+signals[j].transducer.TrimEnd() + "\t" + signals[j].dimension.TrimEnd() + "\t" + signals[j].physicalMin.TrimEnd() + "\t" + signals[j].physicalMax.TrimEnd() + "\t"+
-                signals[j].digitalMin.TrimEnd() + "\t" + signals[j].digitalMax.TrimEnd() + "\t"+signals[j].prefiltering.TrimEnd() + "\t"+signals[j].samples.TrimEnd() + "\t"+signals[j].reserved32.TrimEnd() + "\t"+ 
+                signals[j].digitalMin.TrimEnd() + "\t" + signals[j].digitalMax.TrimEnd() + "\t"+signals[j].prefiltering.TrimEnd() + "\t"+signals[j].samples.TrimEnd() + "\t"+signals[j].reserved32.TrimEnd() + "\t"+
                 signals[j].samplingrate.ToString("F4",CultureInfo.InvariantCulture)+ LF;
         }
     }
@@ -279,9 +290,14 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
     public async void saveFile()
     {
         await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", txt);
-        await JSRuntime.InvokeAsync<object>("saveFile", filename+".txt", txt);
+        await JSRuntime.InvokeAsync<object>("saveFile", header.filename+".txt", txt);
     }
-}
+    public async void CtrlC()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", txt);
+
+    }
+    }
 
 @* End *@
 ```
