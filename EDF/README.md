@@ -4,7 +4,7 @@ Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplu
 
 ![EDF-1](EDF-0.png)
 
-Select EDF file e.g. from https://physionet.org/about/database/
+Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf 
 
 ![EDF-2](EDF-2.png)
 
@@ -44,10 +44,8 @@ Other changes are done into Index.razor [Index.razor](Pages/Index.razor)
 @*
     Displaying EDF file header information
     @jussivirkkala
-    - Support EDF+
-    - Display EDF+ events.
     2021-07-22 Adding length, sampling rate to clipboard. Corrected clipboard.
-    2021-07-21 Resetting signals. Using ParseTry, download, clipboard.
+    2021-07-21 Resetting signals. Using ParseTry, Invariant, download, clipboard.
     2021-07-20 BDF, .ASCII encoding, calculate file duration, sampling rate, check version.
     2021-07-19 Version date. Path www.github.com/jussivirkkala/Blazor.
     2021-07-18 Corrected digital label. Max file size 5 GB, 256 channels.
