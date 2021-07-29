@@ -4,7 +4,9 @@
 
 ![EDF-1](EDF-0.png)
 
-Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf 
+Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf. 
+
+If you have old previous version refresh App with Ctrl+F5. 
 
 ![EDF-2](EDF-1.png)
 
