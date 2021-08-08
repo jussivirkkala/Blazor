@@ -37,7 +37,7 @@ Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Share
     </div>
 </div>
 ``` 
-Other changes are done into Index.razor [Index.razor](Pages/Index.razor)
+Other changes are done into [Pages/Index.razor](Pages/Index.razor)
 ```
 @page "/"
 @using System.IO
@@ -315,7 +315,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
 }
 ```
 
-In wwwroot index.html has changes for UI and hosting. In local testing use /.
+In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. In local testing use replace /blazor/edf with /.
 ```
 <style>
     body {
