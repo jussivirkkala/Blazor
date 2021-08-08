@@ -4,9 +4,7 @@
 
 ![EDF-1](EDF-0.png)
 
-Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf. 
-
-If you have old previous version refresh App with Ctrl+F5. 
+Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf.  
 
 ![EDF-2](EDF-1.png)
 
@@ -16,7 +14,7 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 There are minimal changes to default Blazor template in Visual Studio 2019. 
 
-Extra navigation are commented out using `@*` in MainLayout.razor.
+Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Shared/MainLayout.razor).
 
 ```
 @inherits LayoutComponentBase
@@ -315,8 +313,6 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
 
     }
 }
-
-@* End *@
 ```
 
 In wwwroot index.html has changes for UI and hosting. In local testing use /.
