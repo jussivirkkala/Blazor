@@ -5,6 +5,3 @@ Different Blazor https://blazor.net utilities. NO RESPONSIBILITY TAKEN FOR USE..
 
 Blazor app for viewing EDF header. For testing reading files.
 
-# Note
-
-Simple note taking for testing local storage.
