@@ -1,6 +1,6 @@
 # EDF
 
-2021-07-26 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor. Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
+2021-09-02 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor. Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
 
 ![EDF-1](EDF-0.png)
 
@@ -12,7 +12,12 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 # Code
 
-There are minimal changes to default Blazor template in Visual Studio 2019. 
+There are minimal changes to default Blazor template. You can use .NET5 SDK https://dotnet.microsoft.com/ to run app: 
+
+```
+dotnet watch run
+
+```
 
 Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Shared/MainLayout.razor).
 
@@ -315,7 +320,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
 }
 ```
 
-In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. In local testing use replace /blazor/edf with /.
+In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />```.
 ```
 <style>
     body {
@@ -326,7 +331,7 @@ In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Addi
 ...
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimum-scale=1, height=device-height" />
 ...
-<base href="/blazor/edf/" />
+<base href="/" />
 ...
 <script src="saveFile.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
