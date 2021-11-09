@@ -51,7 +51,7 @@
 @if (header != null)
 {
     <label>
-        Modified: @header.modified Size: @header.size
+        Modified (UTC): @header.modified Size: @header.size
         @if (filesize > 2000000000)
         {
             <label><br />, large files can not be read correctly!</label>
@@ -155,12 +155,12 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         }
         */
         const string LF = "\n"; // 2019-09-02 Remove \r
-        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor v2019-09-02" + LF;
+        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2021-11-09" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss");
         header.modified = s;
-        txt += "Modified\t" + s + LF;
+        txt += "Modified (UTC)\t" + s + LF;
         filesize = e.File.Size;
         s = filesize.ToString();
         header.size = s;
