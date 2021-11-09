@@ -1,6 +1,6 @@
 # EDF
 
-2021-11-09: .NET6 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor. 
+2021-11-09: .NET6 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor-EDF. 
 
 Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
 
@@ -14,11 +14,10 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 # Code
 
-There are minimal changes to default Blazor template. You can use .NET5 SDK https://dotnet.microsoft.com/ to run app: 
+There are minimal changes to default Blazor template. You can use .NET6 SDK https://dotnet.microsoft.com/ to run app: 
 
 ```
 dotnet watch run
-
 ```
 
 Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Shared/MainLayout.razor).
@@ -45,8 +44,7 @@ Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Share
 </div>
 ``` 
 
-Other changes are done into [Pages/Index.razor](Pages/Index.razor)
-
+Other changes are in [Pages/Index.razor](Pages/Index.razor)
 
 ```
 @page "/"
@@ -57,10 +55,10 @@ Other changes are done into [Pages/Index.razor](Pages/Index.razor)
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2021-11-09 Version for .NET6
-    2021-10-30 Blazor-EDF
-    2021-09-02 Including version information in output
-    2021-07-26 overscroll-behavior: none;
+    2021-11-09 Version for .NET6.
+    2021-10-30 Path www.github.com/jussivirkkala/Blazor-EDF.
+    2021-09-02 Including version information in output.
+    2021-07-26 Body overscroll-behavior: none;
     2021-07-25 Corrected size in export. Removed Ctrl+C in file export.
     2021-07-24 Indicating problem with large files. Body overflow-y:hidden.
     2021-07-23 No decimals for fixed sampling rate, length as hh:mm:ss. Displaying modified, size. Two buttons.
@@ -329,7 +327,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
 }
 ```
 
-In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />```.
+[wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />``` in publish\wwwroot\index.html.
 ```
 <style>
     body {
@@ -345,7 +343,7 @@ In [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Addi
 <script src="saveFile.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
 ```
-and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-5.0#disable-integrity-checking-for-pwas.
+and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-6.0#disable-integrity-checking-for-pwas.
 ```
 .map(asset => new Request(asset.url));
 ```
@@ -354,3 +352,5 @@ To publish app:
 
 ```
 dotnet publish -c Release
+```
+
