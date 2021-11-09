@@ -44,7 +44,10 @@ Extra navigation are commented out using `@*` in [Shared/MainLayout.razor](Share
     </div>
 </div>
 ``` 
+
 Other changes are done into [Pages/Index.razor](Pages/Index.razor)
+
+
 ```
 @page "/"
 @using System.IO
@@ -54,6 +57,9 @@ Other changes are done into [Pages/Index.razor](Pages/Index.razor)
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2021-11-09 Version for .NET6
+    2021-10-30 Blazor-EDF
+    2021-09-02 Including version information in output
     2021-07-26 overscroll-behavior: none;
     2021-07-25 Corrected size in export. Removed Ctrl+C in file export.
     2021-07-24 Indicating problem with large files. Body overflow-y:hidden.
@@ -96,7 +102,7 @@ Other changes are done into [Pages/Index.razor](Pages/Index.razor)
 @if (header != null)
 {
     <label>
-        Modified: @header.modified Size: @header.size
+        Modified (UTC): @header.modified Size: @header.size
         @if (filesize > 2000000000)
         {
             <label><br />, large files can not be read correctly!</label>
@@ -136,11 +142,11 @@ Other changes are done into [Pages/Index.razor](Pages/Index.razor)
     }
 }
 <br>
-2021-07-26 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+2021-11-09: .NET6 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
-Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
+ Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://www.virkkala.net/blazor/edf">https://www.virkkala.net/blazor/edf</a> and
-source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.com/jussivirkkala/Blazor</a>
+source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://github.com/jussivirkkala/Blazor-EDF</a> 
 
 @code {
     private edfHeader header;
@@ -199,12 +205,13 @@ source code in <a href="https://github.com/jussivirkkala/Blazor">https://github.
             await SourceStream.ReadAsync(bytes, 0, 256 + 256 * 256);
         }
         */
-        const string LF = "\r\n";
-        txt = "File\t" + header.filename + LF;
+        const string LF = "\n"; // 2019-09-02 Remove \r
+        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2021-11-09" + LF;
+        txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss");
         header.modified = s;
-        txt += "Modified\t" + s + LF;
+        txt += "Modified (UTC)\t" + s + LF;
         filesize = e.File.Size;
         s = filesize.ToString();
         header.size = s;
