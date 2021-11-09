@@ -12,7 +12,7 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 # Code
 
-There are minimal changes to default Blazor template. You can use .NET5 SDK https://dotnet.microsoft.com/ to run app: 
+There are minimal changes to default Blazor template. You can use .NET6 SDK https://dotnet.microsoft.com/ to run app: 
 
 ```
 dotnet watch run
@@ -341,3 +341,9 @@ and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us
 .map(asset => new Request(asset.url));
 ```
 
+# Publish
+
+To publish app: 
+
+```
+dotnet publish -c Release
