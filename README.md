@@ -1,8 +1,8 @@
 # EDF
 
-2021-11-09: .NET5 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor. Use Ctrl+F5 to force refresh. 
+2021-11-09: .NET6 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor. 
 
-Install as PWA by clicking icon in end of browser address bar.
+Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
 
 ![EDF-1](EDF-0.png)
 
