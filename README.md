@@ -327,7 +327,14 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
 }
 ```
 
-[wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. Additional scripts saveFiles.js. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />``` in publish\wwwroot\index.html.
+To publish app: 
+
+```
+dotnet publish -c Release
+```
+
+
+Additional scripts saveFiles.js. [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />``` in publish\wwwroot\index.html.
 ```
 <style>
     body {
@@ -344,13 +351,11 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
 <script src="_framework/blazor.webassembly.js"></script>
 ```
 and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-6.0#disable-integrity-checking-for-pwas.
+
 ```
+.map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
+->
 .map(asset => new Request(asset.url));
 ```
 
-To publish app: 
-
-```
-dotnet publish -c Release
-```
 
