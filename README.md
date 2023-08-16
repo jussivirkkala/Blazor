@@ -1,6 +1,6 @@
 # EDF
 
-2021-11-09: .NET6 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor-EDF. 
+2022-11-11 .NET7 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://www.virkkala.net/blazor/edf and source code in https://github.com/jussivirkkala/Blazor-EDF. 
 
 Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
 
@@ -14,7 +14,7 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 # Code
 
-There are minimal changes to default Blazor template. You can use .NET6 SDK https://dotnet.microsoft.com/ to run app: 
+There are minimal changes to default Blazor template. You can use .NET7 SDK https://dotnet.microsoft.com/ to run app: 
 
 ```
 dotnet watch run
@@ -55,6 +55,7 @@ Other changes are in [Pages/Index.razor](Pages/Index.razor)
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2022-11-11 Version for .NET7. Fancy loading indicator.
     2021-11-09 Version for .NET6.
     2021-10-30 Path www.github.com/jussivirkkala/Blazor-EDF.
     2021-09-02 Including version information in output.
