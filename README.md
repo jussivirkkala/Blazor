@@ -300,7 +300,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         for (j = 0; j < n; j += 1)
         {
             signals[j].samples = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
-            signals[j].samplingrate = UInt16.Parse(signals[j].samples) / duration;
+           // signals[j].samplingrate = UInt16.Parse(signals[j].samples) / duration;
         }
         for (j = 0; j < n; j += 1)
         {
