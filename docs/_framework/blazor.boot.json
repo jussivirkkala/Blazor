@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Blazor-EDF",
   "resources": {
-    "hash": "sha256-FYXdYK8io243BMyvUQM0WBlqPf9bDD0f474/CEX4u/8=",
+    "hash": "sha256-YYrAmwE+WzUUozVmeLkcQTo7kk03H7IOQ7fhWc0XOnU=",
     "jsModuleNative": {
       "dotnet.native.8.0.0.m4swcd6oyx.js": "sha256-LjLDIz9+J7uuiwMlQ4HbNx2BnSpphOtO2MwkoI28vdI="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "Blazor-EDF.wasm": "sha256-O05pAWEDUD44Kds7cV1eval+pPjwBXq+mo18kAYq8qs=",
+      "Blazor-EDF.wasm": "sha256-o2jO2iCxSc0LJfyg308UugL4xhJIr5+bYk94oKjFuQE=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-/9fMLjOrmuogPn1I96TcsbQi24GS/+S2apGms7d3Bos=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-CaxybeBTi4u2O+F++A83U5/HZUDTo7zXj2IYXhdvDpc=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-5FaflSk4l761sg/eVrAb3FIdwbplaj7pDCyFzPHZ2Cc=",
@@ -40,10 +40,10 @@
       "System.Memory.wasm": "sha256-HxWkz7UwBh05wS2ZYKqwyRZs+fF4nOMIesDJVcSZKoQ=",
       "System.Net.Http.wasm": "sha256-TW+R/9ZQjo0P5f/2dW64x5N9qU2TArQ0lBXZRc7Oivk=",
       "System.Net.Primitives.wasm": "sha256-bo1gfuHZsgQyxWH2Favd8eHySb2ogILJUiH+LG7ewjI=",
-      "System.Private.CoreLib.wasm": "sha256-OfDHLZPk95M8IDYkzvIQ4KWp5GB3S2FFTCfBlvyp9/c=",
+      "System.Private.CoreLib.wasm": "sha256-WfrTLzhaHod90NzA4pbXcQnAzVLzMk/tsuPc0Km2ZbM=",
       "System.Private.Uri.wasm": "sha256-0nO0Rp6weeQYlqM5fvWTZa0wFE7v3cW5phjQ7qslsns=",
       "System.Runtime.InteropServices.JavaScript.wasm": "sha256-8v1T2sHtPVF+DFfHC56eeBb2CK3E+CJ2i/u+8hAjWtU=",
-      "System.Runtime.wasm": "sha256-AU4HtjxXH6BjjM/GMnrnxs0ndwtWh4WCKw7f5EaiaVE=",
+      "System.Runtime.wasm": "sha256-WMLp6YDXU6qENdztts63GzvQnPeqdLdbZhB4iEkO+fo=",
       "System.Text.Encodings.Web.wasm": "sha256-PPjgJMbaJy7HmAFbiVQDmuLd+9vm5X5Uxk2KptWctx4=",
       "System.Text.Json.wasm": "sha256-eE8JOL7MxaeGHwUDgwML2aX5C/9/1u2DwGVYgKE/p5g=",
       "System.Text.RegularExpressions.wasm": "sha256-3TnJ+gFbcLQWd64dQi9CTds871jRDrawlfFObiJJADY="

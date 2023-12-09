@@ -1,12 +1,13 @@
 ﻿@page "/"
 @using System.IO
 @using System.Threading
+@using System.Globalization
 
 @inject IJSRuntime JSRuntime
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2023-12-09 Using .NET8 empty template. Uint32
+    2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
     2021-11-09 for .NET6
     2021-10-30 Blazor-EDF
@@ -87,7 +88,7 @@
             <br>Physical min max: @signal.physicalMin @signal.physicalMax
             <br>Digital min max: @signal.digitalMin @signal.digitalMax
             <br>Prefiltering: @signal.prefiltering
-            <br>Samples: @signal.samples; Sampling rate (Hz): @signal.samplingrate.ToString("0.####") // , CultureInfo.InvariantCulture)
+            <br>Samples: @signal.samples; Sampling rate (Hz): @signal.samplingrate.ToString("0.####", CultureInfo.InvariantCulture)
             <br>Reserved: @signal.reserved32
         </label>
     }
@@ -204,9 +205,8 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         txt += "Signals\t" + s + LF;
         uint n = UInt32.Parse(s); //
         double duration;
-        if (double.TryParse(header.duration, out duration)) // 2023-12-09 NumberStyles.Float, CultureInfo.InvariantCulture, out duration))
+        if (double.TryParse(header.duration, CultureInfo.InvariantCulture, out duration)) 
         {
-            // duration = Double.Parse(header.duration); // signal record duration, usually 1 s
             uint r = UInt32.Parse(header.records);
             header.length = duration * r;
         }
@@ -263,7 +263,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         {
             txt += signals[j].label.TrimEnd() + "\t" + signals[j].transducer.TrimEnd() + "\t" + signals[j].dimension.TrimEnd() + "\t" + signals[j].physicalMin.TrimEnd() + "\t" + signals[j].physicalMax.TrimEnd() + "\t" +
                 signals[j].digitalMin.TrimEnd() + "\t" + signals[j].digitalMax.TrimEnd() + "\t" + signals[j].prefiltering.TrimEnd() + "\t" + signals[j].samples.TrimEnd() + "\t" + signals[j].reserved32.TrimEnd() + "\t" +
-                signals[j].samplingrate.ToString("0.####") + LF; // 2023-12-09 CultureInfo.InvariantCulture) + LF;
+                signals[j].samplingrate.ToString("0.####", CultureInfo.InvariantCulture) + LF; 
         }
     }
 
