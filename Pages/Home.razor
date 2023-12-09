@@ -151,14 +151,9 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         int i = 0;
         const long MAXSIZE = 4294967296; // 4 GB, FAT32 limit
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
-        /* Problem reading 2 GB files?
-        using (Stream SourceStream = file.OpenReadStream(MAXSIZE))
-        {
-            await SourceStream.ReadAsync(bytes, 0, 256 + 256 * 256);
-        }
-        */
+
         const string LF = "\n"; // 2019-09-02 Remove \r
-        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2021-11-09" + LF;
+        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-09" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss");
