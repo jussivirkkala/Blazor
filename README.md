@@ -2,7 +2,7 @@
 
 2023-12-09 .NET8 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://jussivirkkala.github.io/Blazor-EDF/ and source code in https://github.com/jussivirkkala/Blazor-EDF. 
 
-Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser address bar.
+Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in the end of browser address bar.
 
 ![EDF-1](EDF-0.png)
 
@@ -19,27 +19,42 @@ There are minimal changes to default Blazor empty template. You can use .NET8 SD
 ```
 dotnet watch run
 ```
-Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js. [wwwroot/index.html](wwwroot/index.html) for clipboard. 
-```
-<style>
-    body {
-        overscroll-behavior: none;
-    }
+Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js  [wwwroot/index.html](wwwroot/index.html) for clipboard and for mobile layout. 
 
-</style>
+```
 ...
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimum-scale=1, height=device-height" />
-...
-<base href="/" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimum-scale=1, height=device-height, viewport-fit=cover" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />...
 ...
 <script src="saveFile.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
 ```
-To publish app: 
+In [wwwroot/css/app.css](wwwroot/css/app.css) for mobile layout
+
+```
+html {
+    overscroll-behavior: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+body {
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+}
+```
+
+</style>
+
+
+To publish app:
 
 ```
 dotnet publish -c Release
 ```
-Copy files from bin\Release\net8.0\publish\wwwroot into docs\ folder. You need empty .nojekyll file and change correct folder e.g. 
-```<base href="https://jussivirkkala.github.io/Blazor-EDF/" />``` in docs\index.html. Use docs\ option in Github pages settings. 
+Copy files from bin\Release\net8.0\publish\wwwroot into docs folder. You need empty .nojekyll file there and change correct folder 
+```<base href="https://jussivirkkala.github.io/Blazor-EDF/" />``` in docs\index.html. Use \docs option in GitHub pages settings. 
 
+End
