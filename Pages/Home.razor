@@ -7,7 +7,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2023-12-10 Checking for header. Local time.
+    2023-12-10 Checking for header and file size. Local time. Using table layout.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
     2021-11-09 for .NET6
@@ -55,12 +55,13 @@
 @if (header != null)
 {
     <label>
-        Modified (UTC): @header.modified Size: @header.size
+        Modified: @header.modified 
+        <br>File size: @header.size
         @if (filesize > 4294967296)
         {
-            <label><br />, large files perhaps not be read correctly!</label>
+            <label><br />, large files perhaps not read correctly!</label>
         }
-        @if (filesize != totalsamples)
+        @if (filesize != calculatedsize)
         {
             <label><br />, file size mismatch!</label>
         }
@@ -73,7 +74,8 @@
         <br>Header length: @header.headerlength
         <br>Reserved: @header.reserved44
         <br>Data records: @header.records
-        <br>Record duration (s): @header.duration; File duration (hh:mm:ss): @TimeSpan.FromSeconds(header.length).TotalHours.ToString("00"):@TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss")
+        <br>Record duration (s): @header.duration
+        <br>File duration (HH:mm:ss): @TimeSpan.FromSeconds(header.length).TotalHours.ToString("00"):@TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss")
         <br>Number of signals: @header.signals
     </label>
 
@@ -85,19 +87,32 @@
     <button @onclick="CtrlC">Ctrl+C</button>
     <button @onclick="saveFile">@(header.filename).txt</button>
 
+    <table>
+    <tr>
+    <td>Label (dimension)</td>
+    <td>Transducer type</td>
+    <td>Physical min max</td>
+    <td>Digital min max</td>
+    <td>Prefiltering</td>
+    <td>Samples</td>
+    <td>Reserved</td>
+    <td>Sampling rate (Hz)</td>
+
+    </tr>
     @foreach (var signal in signals)
     {
-        <br>
-        <label>
-            Label (dimension): @signal.label (@signal.dimension)
-            <br>Transducer type: @signal.transducer
-            <br>Physical min max: @signal.physicalMin @signal.physicalMax
-            <br>Digital min max: @signal.digitalMin @signal.digitalMax
-            <br>Prefiltering: @signal.prefiltering
-            <br>Samples: @signal.samples; Sampling rate (Hz): @signal.samplingrate.ToString("0.####", CultureInfo.InvariantCulture)
-            <br>Reserved: @signal.reserved32
-        </label>
+        <tr>
+            <td>@signal.label (@signal.dimension)</td>
+            <td>@signal.transducer</td>
+            <td>@signal.physicalMin @signal.physicalMax</td>
+            <td>@signal.digitalMin @signal.digitalMax</td>
+            <td>@signal.prefiltering</td>
+            <td>@signal.samples</td>
+            <td>@signal.reserved32</td>
+            <td>@signal.samplingrate.ToString("0.####", CultureInfo.InvariantCulture)</td>
+        </tr>
     }
+    </table>
 }
 <br>
 2023-12-10: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
@@ -112,7 +127,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
     private string txt;
     private long filesize = 0;
 
-    private long totalsamples=0;
+    private long calculatedsize=0;
 
     public class edfHeader
     {
@@ -160,18 +175,17 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         const long MAXSIZE = 4294967296; // 4 GB, FAT32 limit
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
-        const string LF = "\n"; // 2019-09-02 Remove \r
+        const string LF = "\n"; // 2019-09-02 Remove 
         txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-09" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
         header.modified = s;
-        txt += "Modified (UTC)\t" + s + LF;
+        txt += "Modified\t" + s + LF;
         filesize = e.File.Size;
-        totalsamples=filesize;
         s = filesize.ToString();
         header.size = s;
-        txt += "Size\t" + s + LF;
+        txt += "File size\t" + s + LF;
         s = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         header.version = s; // BitConverter.ToString(bytes, 0, 8);
         txt += "Version\t" + s + LF;
@@ -253,11 +267,14 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         {
             signals[j].prefiltering = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
         }
+        calculatedsize=0;
         for (j = 0; j < n; j += 1)
         {
             signals[j].samples = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
             signals[j].samplingrate = UInt32.Parse(signals[j].samples) / duration;
+            calculatedsize+= UInt32.Parse(signals[j].samples);
         }
+        calculatedsize=calculatedsize*UInt32.Parse(header.records)*2+UInt32.Parse(header.headerlength);
         for (j = 0; j < n; j += 1)
         {
             signals[j].reserved32 = System.Text.Encoding.ASCII.GetString(bytes, i, 32); i += 32;
