@@ -6,7 +6,7 @@ Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in end of browser 
 
 ![EDF-1](EDF-0.png)
 
-Select EDF file e.g. from https://physionet.org/about/database/. Examples https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf.  
+Select EDF or BDF file e.g. from https://physionet.org/about/database/. Example https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf.  
 
 ![EDF-2](EDF-1.png)
 
@@ -14,15 +14,12 @@ You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.ed
 
 # Code
 
-There are minimal changes to default Blazor empty template. You can use .NET8 SDK https://dotnet.microsoft.com/ to run app: 
+There are minimal changes to default Blazor empty template. You can use .NET8 SDK https://dotnet.microsoft.com/ to build and run app: 
 
 ```
 dotnet watch run
 ```
-Code and UI is in [Pages/Home.razor](Pages/Home.razor)
-
-
-Additional scripts saveFiles.js. [wwwroot/index.html](wwwroot/index.html) has changes for UI and hosting. When hosting use correct folder e.g. ```<base href="/blazor/edf/" />``` in publish\wwwroot\index.html.
+Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js. [wwwroot/index.html](wwwroot/index.html) for clipboard. 
 ```
 <style>
     body {
@@ -38,18 +35,11 @@ Additional scripts saveFiles.js. [wwwroot/index.html](wwwroot/index.html) has ch
 <script src="saveFile.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
 ```
-and in service-worker.published.js for PWA. See https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly?view=aspnetcore-6.0#disable-integrity-checking-for-pwas.
-
-```
-.map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
-->
-.map(asset => new Request(asset.url));
-```
-
 To publish app: 
 
 ```
 dotnet publish -c Release
 ```
-Copy files from bin\Release\net8.0\publish\wwwroot to 
+Copy files from bin\Release\net8.0\publish\wwwroot into docs\ folder. You need empty .nojekyll file and change correct folder e.g. 
+```<base href="https://jussivirkkala.github.io/Blazor-EDF/" />``` in docs\index.html. Use docs\ option in Github pages settings. 
 
