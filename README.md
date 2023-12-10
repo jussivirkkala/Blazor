@@ -19,7 +19,7 @@ There are minimal changes to default Blazor empty template. You can use .NET8 SD
 ```
 dotnet watch run
 ```
-Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js  [wwwroot/index.html](wwwroot/index.html) for clipboard and for mobile layout. 
+Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js  [wwwroot/index.html](wwwroot/index.html) for saving file. 
 
 ```
 ...
