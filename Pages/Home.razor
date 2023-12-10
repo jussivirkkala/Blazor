@@ -115,7 +115,7 @@
     </table>
 }
 <br>
-2023-12-10: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+v2023-12-10: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
  Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
@@ -176,7 +176,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
         const string LF = "\n"; // 2019-09-02 Remove 
-        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-09" + LF;
+        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-10" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
@@ -230,7 +230,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         }
         else
             header.length = -1;
-        txt += "File duration (hh:mm:ss)\t" + TimeSpan.FromSeconds(header.length).TotalHours.ToString("00") + ":" + TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss") + LF;
+        txt += "File duration (HH:mm:ss)\t" + TimeSpan.FromSeconds(header.length).TotalHours.ToString("00") + ":" + TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss") + LF;
 
         signals = new edfSignal[n];
         int j;
