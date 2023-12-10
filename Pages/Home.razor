@@ -7,6 +7,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2023-12-10 Checking for header.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
     2021-11-09 for .NET6
@@ -55,7 +56,7 @@
 {
     <label>
         Modified (UTC): @header.modified Size: @header.size
-        @if (filesize > 2000000000)
+        @if (filesize > 4294967296)
         {
             <label><br />, large files can not be read correctly!</label>
         }
@@ -94,7 +95,7 @@
     }
 }
 <br>
-2023-12-09: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+2023-12-10: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
  Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
@@ -147,7 +148,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         header.filename = e.File.Name;
 
         // Header 256 bytes
-        var bytes = new byte[256 + 256 * 256]; // Max 256 channels
+        var bytes = new byte[256 + 512 * 256]; // Max 512 channels
         int i = 0;
         const long MAXSIZE = 4294967296; // 4 GB, FAT32 limit
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
@@ -168,8 +169,8 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         txt += "Version\t" + s + LF;
         if (header.version.CompareTo("0       ") != 0)
         {
-            // header.version = "Not correct EDF/BDF file";
-            // return;
+            header.version = "Not correct EDF/BDF file";
+            return;
         }
         s = System.Text.Encoding.Latin1.GetString(bytes, i, 80); i += 80;
         header.patient = s;
