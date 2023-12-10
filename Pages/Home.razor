@@ -7,7 +7,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2023-12-10 Checking for header.
+    2023-12-10 Checking for header. Local time.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
     2021-11-09 for .NET6
@@ -58,8 +58,13 @@
         Modified (UTC): @header.modified Size: @header.size
         @if (filesize > 4294967296)
         {
-            <label><br />, large files can not be read correctly!</label>
+            <label><br />, large files perhaps not be read correctly!</label>
         }
+        @if (filesize != totalsamples)
+        {
+            <label><br />, file size mismatch!</label>
+        }
+
         <br>Version: @header.version
         <br>Patient: @header.patient
         <br>Recording: @header.recording
@@ -106,6 +111,8 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
     private edfSignal[] signals;
     private string txt;
     private long filesize = 0;
+
+    private long totalsamples=0;
 
     public class edfHeader
     {
@@ -157,10 +164,11 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-09" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
-        s = e.File.LastModified.ToString("yyyy-MM-ddTHH\\:mm\\:ss");
+        s = e.File.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
         header.modified = s;
         txt += "Modified (UTC)\t" + s + LF;
         filesize = e.File.Size;
+        totalsamples=filesize;
         s = filesize.ToString();
         header.size = s;
         txt += "Size\t" + s + LF;
