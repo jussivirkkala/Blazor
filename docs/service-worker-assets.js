@@ -14,7 +14,7 @@
     },
     {
       "hash": "sha256-Vr6ZXKoP77zgabrMIxQ1GbOkrxfx5XGqHO0odLhUIMY=",
-      "url": "_framework\/dotnet.native.wasm"
+      "url": "_framework\/dotnet.native.was,"
     },
     {
       "hash": "sha256-WdSX3HQvnBYF0KJLZoOyHvTzMHetaob6PV0Kn2K+QXw=",
@@ -22,15 +22,15 @@
     },
     {
       "hash": "sha256-SZLtQnRc0JkwqHab0VUVP7T3uBPSeYzxzDnpxPpUnHk=",
-      "url": "_framework\/icudt_CJK.dat"
+      "url": "_framework\/icudt_CJK.br"
     },
     {
       "hash": "sha256-8fItetYY8kQ0ww6oxwTLiT3oXlBwHKumbeP2pRF4yTc=",
-      "url": "_framework\/icudt_EFIGS.dat"
+      "url": "_framework\/icudt_EFIGS.br"
     },
     {
       "hash": "sha256-L7sV7NEYP37\/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs=",
-      "url": "_framework\/icudt_no_CJK.dat"
+      "url": "_framework\/icudt_no_CJK.br"
     },
     {
       "hash": "sha256-Kyl1vlIOocpt1ntItK2hczmHJX2VNoeLI1nijXSxNfc=",
