@@ -7,6 +7,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2024-11-23 Using .NET9
     2023-12-10 Checking for header and file size. Local time. Using table layout.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
@@ -63,7 +64,7 @@
         }
         @if (filesize != calculatedsize)
         {
-            <label><br />, file size mismatch!</label>
+            <label><br />- file size mismatch!</label>
         }
 
         <br>Version: @header.version
@@ -115,7 +116,7 @@
     </table>
 }
 <br>
-v2023-12-10: .NET8 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+v2024-11-23: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
  Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
 App is hosted on <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
@@ -176,7 +177,7 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
         const string LF = "\n"; // 2019-09-02 Remove 
-        txt = "Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF v2023-12-10" + LF;
+        txt = "v2024-11-23 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = e.File.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
