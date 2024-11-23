@@ -2,12 +2,14 @@
 @using System.IO
 @using System.Threading
 @using System.Globalization
+@using System.Text;
+
 
 @inject IJSRuntime JSRuntime
 @*
     Displaying EDF file header information
     @jussivirkkala
-    2024-11-23 Using .NET9
+    2024-11-23 Using .NET9. Possibility to save .edf with new patient information.
     2023-12-10 Checking for header and file size. Local time. Using table layout.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
     2022-11-11 for .NET7
@@ -87,7 +89,8 @@
     <br />
     <button @onclick="CtrlC">Ctrl+C</button>
     <button @onclick="saveFile">@(header.filename).txt</button>
-
+    <input type="text" maxlength="80" @bind="patient"/><button @onclick="saveEDF">Create @(patient).edf</button>
+    
     <table>
     <tr>
     <td>Label (dimension)</td>
@@ -119,10 +122,13 @@
 v2024-11-23: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
  Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
-App is hosted on <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
-source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://github.com/jussivirkkala/Blazor-EDF</a>
+App is hosted at <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
+source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://github.com/jussivirkkala/Blazor-EDF</a>
 
 @code {
+    IBrowserFile file = null;
+    String @patient;
+
     private edfHeader header;
     private edfSignal[] signals;
     private string txt;
@@ -167,8 +173,8 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
     {
         header = new edfHeader();
         if (signals != null) signals = null;
-        IBrowserFile file = e.File;
-        header.filename = e.File.Name;
+        file = e.File;
+        header.filename = e.File.Name; // 2024-11-23 e.File
 
         // Header 256 bytes
         var bytes = new byte[256 + 512 * 256]; // Max 512 channels
@@ -180,10 +186,10 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         txt = "v2024-11-23 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
-        s = e.File.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
+        s = file.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
         header.modified = s;
         txt += "Modified\t" + s + LF;
-        filesize = e.File.Size;
+        filesize = file.Size;
         s = filesize.ToString();
         header.size = s;
         txt += "File size\t" + s + LF;
@@ -196,7 +202,8 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
             return;
         }
         s = System.Text.Encoding.Latin1.GetString(bytes, i, 80); i += 80;
-        header.patient = s;
+        header.patient = s.TrimEnd(); // 2024-11-23
+        patient=header.patient;
         txt += "Patient\t" + s + LF;
         s = System.Text.Encoding.ASCII.GetString(bytes, i, 80); i += 80;
         header.recording = s;
@@ -293,6 +300,41 @@ source code in <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
     public async void saveFile()
     {
         await JSRuntime.InvokeAsync<object>("saveFile", header.filename + ".txt", txt);
+    }
+    public async void saveEDF()
+    {
+        const long MAXSIZE = 4294967296;
+        using var fileStream =  file.OpenReadStream(MAXSIZE);
+
+        using var memoryStream = new MemoryStream();
+
+            // Copy the file content into memory
+            await fileStream.CopyToAsync(memoryStream);
+
+            // Modify specific bytes
+            var modifiedData = ModifyBytes(memoryStream.ToArray());
+
+            // Create a new memory stream for the modified data
+            using var modifiedStream = new MemoryStream(modifiedData);
+
+        var streamRef = new DotNetStreamReference(modifiedStream);
+
+        // Call JavaScript to handle the file download
+        await JSRuntime.InvokeVoidAsync("saveStream", streamRef, patient+".edf" );
+        return;
+
+        // Out of memory
+        var bytes = new byte[filesize]; 
+        await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, (int) filesize);
+        string base64String = Convert.ToBase64String(bytes);
+        await JSRuntime.InvokeAsync<object>("saveBinary", header.filename , base64String);
+    }
+ private byte[] ModifyBytes(byte[] data)
+    {
+        string newpatient=patient.PadRight(80,'.');
+        byte[] bytes = Encoding.UTF8.GetBytes(newpatient);
+        Array.Copy(bytes,0,data,8,80);
+        return data;
     }
     public async void CtrlC()
     {
