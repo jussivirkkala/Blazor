@@ -331,7 +331,7 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
     }
  private byte[] ModifyBytes(byte[] data)
     {
-        string newpatient=patient.PadRight(80,'.');
+        string newpatient=patient.PadRight(80,' ');
         byte[] bytes = Encoding.UTF8.GetBytes(newpatient);
         Array.Copy(bytes,0,data,8,80);
         return data;
