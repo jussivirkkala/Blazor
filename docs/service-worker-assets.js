@@ -1,9 +1,9 @@
 self.assetsManifest = {
-  "version": "1ZrSiews",
+  "version": "9W6xwnVv",
   "assets": [
     {
-      "hash": "sha256-DGeXcpeBAe2Wg+tcwW0ngCDRKD/2A/3OTsM9PhnUWsM=",
-      "url": "_framework/Blazor-EDF.curk3ra8h9.wasm"
+      "hash": "sha256-HV2GM9Gpmzqt+/FZ2UMLJXIcJj6oQuewfRqyOx55l2I=",
+      "url": "_framework/Blazor-EDF.73vi9ronh9.wasm"
     },
     {
       "hash": "sha256-kgPSNv/NN2Vxg3BB2yM4/KeCEGPhcKNKzaC03979pnM=",
@@ -14,8 +14,8 @@ self.assetsManifest = {
       "url": "_framework/Microsoft.AspNetCore.Components.WebAssembly.ikvkgqjzye.wasm"
     },
     {
-      "hash": "sha256-epg6pWgIxTrdTGMcD/kuz+nqJG1b4WoH8rry0GjHEdY=",
-      "url": "_framework/Microsoft.AspNetCore.Components.eyz2tycmgd.wasm"
+      "hash": "sha256-D0zwVuPC+kwGNQlOuOBmy+6iqMebdpj1fjs+gx4nGtQ=",
+      "url": "_framework/Microsoft.AspNetCore.Components.f4jxhj9grh.wasm"
     },
     {
       "hash": "sha256-AyL87FvJMf14Dcn8HeQ3n2veg/RQGVGCjfpJPt1RQC4=",
@@ -110,12 +110,12 @@ self.assetsManifest = {
       "url": "_framework/System.Private.Uri.g828qtivtf.wasm"
     },
     {
-      "hash": "sha256-VS4CSyZJNRAj+SrJqgbXBFWlGMlNDgM4rbwJ6gTH5qg=",
-      "url": "_framework/System.Runtime.InteropServices.JavaScript.x50649m5t2.wasm"
+      "hash": "sha256-Y/5ZInX5lzkxmUiDMS3I6FX3mv3I2ENm6CgHRqZE9u8=",
+      "url": "_framework/System.Runtime.7jnt2svvj6.wasm"
     },
     {
-      "hash": "sha256-gx3TMmqerHCPQZNNMPackqSAzo0gKcbib+llPPxYuNs=",
-      "url": "_framework/System.Runtime.h77wyxvexd.wasm"
+      "hash": "sha256-VS4CSyZJNRAj+SrJqgbXBFWlGMlNDgM4rbwJ6gTH5qg=",
+      "url": "_framework/System.Runtime.InteropServices.JavaScript.x50649m5t2.wasm"
     },
     {
       "hash": "sha256-3Bkwa9mSjO7xOdlVLl0/qnjjZiS82EjQaxuCRyCUaC0=",
@@ -130,7 +130,7 @@ self.assetsManifest = {
       "url": "_framework/System.Text.RegularExpressions.gl65p7jdfx.wasm"
     },
     {
-      "hash": "sha256-F3sgvHGwNp0phyeYWJ+ONxjJisJhmwKU0wvg7SPIeV4=",
+      "hash": "sha256-UdQrdxTw4wAozwu8DXyAdsJKefOy24IhNFTSxWxKpP4=",
       "url": "_framework/blazor.boot.json"
     },
     {
