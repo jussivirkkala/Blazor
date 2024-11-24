@@ -1,6 +1,6 @@
 # EDF
 
-2024-11-23 .NET9.0.0 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted on https://jussivirkkala.github.io/Blazor-EDF/ and source code in https://github.com/jussivirkkala/Blazor-EDF. 
+2024-11-23 .NET9.0.0 Blazor https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info/ header information. Progressive web app (PWA) for offline use in any mobile, PC, Mac browser. File is analyzed locally. It is hosted in https://jussivirkkala.github.io/Blazor-EDF/ and source code in https://github.com/jussivirkkala/Blazor-EDF. 
 
 Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in the end of browser address bar.
 
@@ -54,7 +54,7 @@ To publish app:
 ```
 dotnet publish -c Release
 ```
-Copy files from bin\Release\net9.0\publish\wwwroot into docs folder. You need empty .nojekyll file there and change correct folder 
-```<base href="https://jussivirkkala.github.io/Blazor-EDF/" />``` in docs\index.html. Use \docs option in GitHub pages settings. 
+Copy files from bin\Release\net9.0\publish\wwwroot into docs folder. Change correct folder 
+```<base href="https://jussivirkkala.github.io/Blazor-EDF/" />``` in docs\index.html. Use \docs option in GitHub pages settings. You need empty .nojekyll file there.
 
 End
