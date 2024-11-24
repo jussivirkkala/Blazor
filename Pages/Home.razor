@@ -59,14 +59,15 @@
 {
     <label>
         Modified: @header.modified 
-        <br>File size: @header.size
+        <br>File size: @filesize
         @if (filesize > 4294967296)
         {
-            <label><br />, large files perhaps not read correctly!</label>
+            <label><br />- large files perhaps not read correctly!</label>
         }
+        <br>Calculated size: @calculatedsize
         @if (filesize != calculatedsize)
         {
-            <label><br />- file size mismatch!</label>
+            <label><br />- does not match with file size, bdf?</label>
         }
 
         <br>Version: @header.version
@@ -117,13 +118,11 @@
         </tr>
     }
     </table>
-    <button @onclick="listAnnotations">Annotations</button>
-    @sAnnotations
 }
 <br>
 v2024-11-24: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
-<a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF  header information.
- Progressive web app (PWA) for offline use in modern mobile, PC, Mac browser. File is analyzed locally.
+<a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF header information.
+ Progressive web app (PWA) for offline use in desktop or mobile browser. File is analyzed locally.
 App is hosted at <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
 source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://github.com/jussivirkkala/Blazor-EDF</a>. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND...
 
@@ -196,7 +195,7 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
         const string LF = "\n"; // 2019-09-02 Remove 
-        txt = "v2024-11-23 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
+        txt = "v2024-11-24 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = file.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
@@ -204,7 +203,7 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         txt += "Modified\t" + s + LF;
         filesize = file.Size;
         s = filesize.ToString();
-        header.size = s;
+//        header.size = s;
         txt += "File size\t" + s + LF;
         s = System.Text.Encoding.ASCII.GetString(bytes, i, 8); i += 8;
         header.version = s; // BitConverter.ToString(bytes, 0, 8);
@@ -412,46 +411,42 @@ StateHasChanged();
         const long MAXSIZE = 4294967296;
         using var fileStream =  file.OpenReadStream(MAXSIZE);
 
-const int bufferSize = 8192; // 8 KB buffer
-const int modificationOffset = 8; // Offset to modify bytes
 
+        // Prepare the data to modify (80 bytes of padded patient name)
+        string newPatient = patient.PadRight(80, ' ');
+        byte[] replacementBytes = Encoding.UTF8.GetBytes(newPatient);
 
-using var tempStream = new FileStream("tempfile.edf", FileMode.Create, FileAccess.ReadWrite);
+        const int bufferSize = 1024*256; // 
+        using var tempStream = new FileStream("tempfile.edf", FileMode.Create, FileAccess.ReadWrite);
 
-// Prepare the data to modify (80 bytes of padded patient name)
-string newPatient = patient.PadRight(80, ' ');
-byte[] replacementBytes = Encoding.UTF8.GetBytes(newPatient);
+        // Process the file in chunks
+        byte[] buffer = new byte[bufferSize];
+        int bytesRead;
+        long currentPosition = 0;
 
-// Process the file in chunks
-byte[] buffer = new byte[bufferSize];
-int bytesRead;
-long currentPosition = 0;
+        while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        {
+            // Modify bytes at the specified offset
+            if (currentPosition == 0) 
+            {
+                Array.Copy(replacementBytes, 0, buffer, 8,80);
+            }
 
-while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-{
-    if (currentPosition <= modificationOffset && currentPosition + bytesRead > modificationOffset)
-    {
-        // Modify bytes at the specified offset
-        int offsetInBuffer = (int)(modificationOffset - currentPosition);
-        int copyLength = Math.Min(replacementBytes.Length, buffer.Length - offsetInBuffer);
-        Array.Copy(replacementBytes, 0, buffer, offsetInBuffer, copyLength);
-    }
+            // Write the processed chunk to the temporary file
+            await tempStream.WriteAsync(buffer, 0, bytesRead);
+            currentPosition += bytesRead;
+        }
 
-    // Write the processed chunk to the temporary file
-    await tempStream.WriteAsync(buffer, 0, bytesRead);
-    currentPosition += bytesRead;
-}
+        // Reset the stream position for further use (e.g., download) 
+        tempStream.Seek(0, SeekOrigin.Begin);
 
-// Reset the stream position for further use (e.g., download)
-tempStream.Seek(0, SeekOrigin.Begin);
+        var streamRef = new DotNetStreamReference(tempStream);
 
-var streamRef = new DotNetStreamReference(tempStream);
+        // Call JavaScript to handle the file download
+        await JSRuntime.InvokeVoidAsync("saveStream", streamRef, $"{patient}.edf");
+        return;
 
-// Call JavaScript to handle the file download
-await JSRuntime.InvokeVoidAsync("saveStream", streamRef, $"{patient}.edf");
-return;
-
-        // Out of memory
+        // Out of memory 2
         //
         using var memoryStream = new MemoryStream();
 
@@ -473,7 +468,7 @@ return;
         await JSRuntime.InvokeVoidAsync("saveStream", streamRef, patient+".edf" );
         return;
 
-        // Out of memory
+        // Out of memory 1
         //
         // var bytes = new byte[filesize]; 
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, (int) filesize);
