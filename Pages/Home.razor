@@ -8,7 +8,9 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
-    - Displaying annotations
+     2024-12-01 List of annotations.
+    2024-11-30 Annotations testing.
+    2024-11-26 Working on annotations.
     2024-11-23 Using .NET9. Possibility to save .edf with new patient information.
     2023-12-10 Checking for header and file size. Local time. Using table layout.
     2023-12-09 Using .NET8 empty template. Uint32. Using System.Globalization for CultureInfo.InvariantCulture
@@ -81,16 +83,16 @@
         <br>Record duration (s): @header.duration
         <br>File duration (HH:mm:ss): @TimeSpan.FromSeconds(header.length).TotalHours.ToString("00"):@TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss")
         <br>Number of signals: @header.signals
+        <br>@sError
     </label>
-
 }
 
 @if (signals != null)
 {
     <br />
     <button @onclick="CtrlC">Ctrl+C</button>
-    <button @onclick="saveFile">@(header.filename).txt</button>
-    <input type="text" maxlength="80" @bind="patient"/><button @onclick="saveEDF">Create @(patient).edf</button>
+    <button @onclick="saveFile">@(header?.filename).txt</button>
+    <input type="text" maxlength="80" @bind="patient"/><button @onclick="saveEDF">Create (slow) @(patient).edf</button>
     
     <table>
     <tr>
@@ -102,7 +104,6 @@
     <td>Samples</td>
     <td>Reserved</td>
     <td>Sampling rate (Hz)</td>
-
     </tr>
     @foreach (var signal in signals)
     {
@@ -117,29 +118,59 @@
             <td>@signal.samplingrate.ToString("0.####", CultureInfo.InvariantCulture)</td>
         </tr>
     }
+
+    </table>
+    @if (iAnnotatation1>0)
+    {
+    <button @onclick="listAnnotations">List (slow) and -annotations.txt</button>
+    }
+}
+
+@if (edfAnnotations.Count > 0)
+{
+    <table>
+    <tr>
+    <td>Start (s)</td>
+    <td>Duration (s)</td>
+    <td>Label</td>
+    </tr>
+    @foreach (var annotation in edfAnnotations)
+    {
+        <tr>
+            <td>@annotation.start</td>
+            <td>@annotation.duration</td>
+            <td>@annotation.label</td>
+        </tr>
+    }
     </table>
 }
+
 <br>
-v2024-11-24: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+v2024-12-01: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF header information.
  Progressive web app (PWA) for offline use in desktop or mobile browser. File is analyzed locally.
-App is hosted at <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://jussivirkkala.github.io/Blazor-EDF/</a> and
-source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://github.com/jussivirkkala/Blazor-EDF</a>. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND...
+App is hosted at <a href="https://pages.github.hus.fi/KNF/Blazor-EDF/">https://pages.github.hus.fi/KNF/Blazor-EDF/</a> and
+source code at <a href="https://github.hus.fi/KNF/Blazor-EDF">https://github.hus.fi/KNF/Blazor-EDF</a>. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND...
 
 @code {
     IBrowserFile file = null;
-    string @patient;
+    string @patient="";
 
-    private edfHeader header;
-    private edfSignal[] signals;
+    private edfHeader? header ;
+    private edfSignal[]? signals;
 
-    private edfAnnotation[] edfAnnotations;
-    string sAnnotations="a";
+    List<edfAnnotation> edfAnnotations = new List<edfAnnotation>();
+
+    string sAnnotations="";
     
-    private string txt;
+    string sError="";
+    private string txt="";
     private long filesize = 0;
 
     private long calculatedsize=0;
+    private int iAnnotatation1=0;
+    private int iAnnotatation2=0;
+    
 
     public class edfHeader
     {
@@ -177,12 +208,19 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
 
     public class edfAnnotation
     {
-        public string time { get; set; } = "";
+        public string start { get; set; } = "";
+        public string duration { get; set; } = "";
+        
         public string label { get; set; } = "";
     }
 
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
+        iAnnotatation1=0;
+        edfAnnotations.Clear();
+        sError="";
+
+
         header = new edfHeader();
         if (signals != null) signals = null;
         file = e.File;
@@ -195,7 +233,7 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
         const string LF = "\n"; // 2019-09-02 Remove 
-        txt = "v2024-11-24 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
+        txt = "v2024-12-01 Reading EDF, BDF header information https://github.hus.fi/KNF/Blazor-EDF" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = file.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
@@ -252,12 +290,14 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
             header.length = -1;
         txt += "File duration (HH:mm:ss)\t" + TimeSpan.FromSeconds(header.length).TotalHours.ToString("00") + ":" + TimeSpan.FromSeconds(header.length).ToString(@"mm\:ss") + LF;
 
+
         signals = new edfSignal[n];
+        
         int j;
         for (j = 0; j < n; j += 1)
         {
             signals[j] = new edfSignal();
-            signals[j].label = System.Text.Encoding.ASCII.GetString(bytes, i, 16); i += 16;
+            signals[j].label = System.Text.Encoding.ASCII.GetString(bytes, i, 16); i += 16;        
         }
         for (j = 0; j < n; j += 1)
         {
@@ -292,9 +332,22 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         {
             signals[j].samples = System.Text.Encoding.ASCII.GetString(bytes, i, 8).TrimEnd(); i += 8;
             signals[j].samplingrate = UInt32.Parse(signals[j].samples) / duration;
-            calculatedsize+= UInt32.Parse(signals[j].samples);
+            if (signals[j].label.Trim().Equals("EDF Annotations"))
+            {
+                if (j < (n-1))
+                {
+                    sError+="Skipped non last EDF Annotation trace, ";
+                }
+                else 
+                {
+                    iAnnotatation1=(int) calculatedsize;
+                    iAnnotatation2=(int) UInt32.Parse(signals[j].samples)*2;
+                }
+            }
+            calculatedsize+= UInt32.Parse(signals[j].samples)*2;
         }
-        calculatedsize=calculatedsize*UInt32.Parse(header.records)*2+UInt32.Parse(header.headerlength);
+        // 2024-11-30 Moved *2 above
+        calculatedsize=calculatedsize*UInt32.Parse(header.records)+UInt32.Parse(header.headerlength);
         for (j = 0; j < n; j += 1)
         {
             signals[j].reserved32 = System.Text.Encoding.ASCII.GetString(bytes, i, 32); i += 32;
@@ -324,9 +377,16 @@ Onset and Duration can contain a dot ('.') but only if the fraction of a second 
 So the TAL ends with a 20 followed by a 0.
 ...
 
+2.2.4 Time keeping of data records
+...
+The startdate/time of a file is specified in the EDF+ header fields 'startdate of recording' and 'starttime of recording'. 
+These fields must indicate the absolute second in which the start of the first data record falls. So, the first TAL in the
+ first data record always starts with +0.X2020, indicating that the first data record starts a fraction, X, of a second 
+ after the startdate/time that is specified in the EDF+ header. If X=0, then the .X may be omitted.
+
 Each TAL starts with a time stamp Onset 21 Duration 20 in which 21 and 20 are single bytes with value 21 and 20
 
-
+, the first TAL in the first data record always starts with +0.X2020,
 So, the first TAL in the first data record always starts with +0.X 20 20
 
 ...
@@ -338,11 +398,107 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
 */
     public async void listAnnotations()
     {
-        Int32 pos=256+Int32.Parse(header.signals)*256;
-
-
         const long MAXSIZE = 4294967296;
         using var fileStream =  file.OpenReadStream(MAXSIZE);
+
+        // Seek past header, signal headers
+    
+        var buffer1 = new byte[UInt32.Parse(header.headerlength)+iAnnotatation1];
+        await fileStream.ReadAsync(buffer1, 0, Int32.Parse(header.headerlength)+iAnnotatation1);
+
+
+        // Read annotation
+        var buffer2 = new byte[iAnnotatation2];
+        int bytesRead;
+        string a="",start="",duration="",label="";
+        int j1=0;
+        string txt2="Start (s)\tDuration (s)\tLabel\n";
+        while ((bytesRead = await fileStream.ReadAsync(buffer2, 0, iAnnotatation2)) > 0)
+        {
+            for (int j=0; j < iAnnotatation2; j++)
+            {
+            switch (buffer2[j])
+            {   
+
+
+
+
+                case 0: // end with 0
+                if (start.Length>0)
+                {
+                    edfAnnotation annotation=new edfAnnotation();
+                    annotation.start=start;
+                    annotation.duration=duration;
+                    annotation.label=label;                    
+                    label=label.Replace("\r","#");
+                    label=label.Replace("\n","#");
+                    edfAnnotations.Add(annotation);
+                    txt2 +=start+"\t"+duration+"\t"+label+"\n";
+//                    sAnnotations+=s+","+d+","+t+" - ";
+                    start="";
+                    duration="";
+                    label="";
+                }
+                else j=iAnnotatation2;
+                break;
+
+                case 20: // 
+                    if (start=="")
+                    { // 20 before 21 when no duration
+                        start=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1); // a
+                        a="";
+                    }
+                    else
+                    {   
+                        if (a!="")
+                        {
+                        if (duration=="") // 20 after duration or in end of label 
+                            duration=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);
+                        else
+                            label=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);;
+                        }
+                        a="";
+                    }
+                    break;
+
+
+                case 21: // first 21 when duration
+                    start=a;
+                    a="";
+                    break;
+
+                default:                
+                    if (a=="")
+                        j1=j;
+                    a+= System.Text.Encoding.UTF8.GetString(buffer2,j,1);
+                    break;
+
+            }
+            }
+
+            // If EDF Annotation is not last (NOT IMPLEMENTED)     
+            // Seek past other channels data in block
+            await fileStream.ReadAsync(buffer1, 0, iAnnotatation1);
+         
+        }        
+        fileStream.Close();
+        StateHasChanged();
+        await JSRuntime.InvokeAsync<object>("saveFile", header?.filename + "-annotations.txt", txt2);
+
+    }
+
+    public async void listAnnotations2()
+    {
+        sAnnotations="";
+        edfAnnotations.Clear();
+
+        Int32 pos=Int32.Parse(header.headerlength)+iAnnotatation1; // +0*28*250*2+27*250*2;
+
+        sError=iAnnotatation1.ToString();
+        const long MAXSIZE = 4294967296;
+        using var fileStream =  file.OpenReadStream(MAXSIZE);
+
+
         using var memoryStream = new MemoryStream();
         // Copy the file content into memory
         await fileStream.CopyToAsync(memoryStream);
@@ -350,62 +506,85 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
         // Modify specific bytes
         var data =(memoryStream.ToArray());
 
-        string s="",d="",t="",a="";
-        for (int l=0; l<1000; l++)
+        string a="",start="",duration="",label="";
+        for (int r=0;r<10;r++)
         {
-            
+        for (int l=0; l<2000; l++)
+        {
+                //    sError+= data[pos+l].ToString()+" ";
+
             switch (data[pos+l])
-            {
-                case 0:
-                
-                sAnnotations+=s+","+d+","+t+" - ";
-                a="";
-                s="";
-                d="";
-                t="";
-                
+            {   
+
+
+
+
+                case 0: // end with 0
+                if (start.Length>0)
+                {
+                    edfAnnotation annotation=new edfAnnotation();
+                    annotation.start=start;
+                    annotation.duration=duration;
+                    annotation.label=label;
+                    edfAnnotations.Add(annotation);
+//                    sAnnotations+=s+","+d+","+t+" - ";
+                    start="";
+                    duration="";
+                    label="";
+                }
                 break;
 
-                case 20:
-
-                if (s=="")
-                    s=a;
-                else   
-                    if (d=="")
-                        d=a;
+                case 20: // 
+                    if (start=="")
+                    { // 20 before 21 when no duration
+                        start=a;
+                        a="";
+                    }
                     else
-                         t+=a+" ";
-                a="";
+                    {   
+                        if (duration=="") // 20 after duration or in end of label 
+                            duration=a;
+                        else
+                             label=a;
 
-                break;
+                        a="";
+                    }
+                    break;
 
-                case 21:
-                    s=a;
+
+                case 21: // first 21 when duration
+                    start=a;
                     a="";
-                break;
+                    break;
 
-                default:
-                
-                a+= System.Text.Encoding.ASCII.GetString(data,pos+l,1);
-                break;
-
+                default:                
+                    a+= System.Text.Encoding.UTF8.GetString(data,pos+l,1);
+                    break;
             }
-
+            
+        }
+        pos+=iAnnotatation1+2000;
         }
 
-    
 
-
-sAnnotations+="End";
-StateHasChanged();
+    // sAnnotations+="End";
+    StateHasChanged();
     }
 
 
     // https://www.syncfusion.com/faq/blazor/general/how-do-i-generate-and-save-a-file-client-side-using-blazor
     public async void saveFile()
     {
-        await JSRuntime.InvokeAsync<object>("saveFile", header.filename + ".txt", txt);
+        await JSRuntime.InvokeAsync<object>("saveFile", header?.filename + ".txt", txt
+            );
     }
+    
+    public async void CtrlC() 
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", txt); 
+
+    }
+
     public async void saveEDF()
     {
         const long MAXSIZE = 4294967296;
@@ -416,8 +595,8 @@ StateHasChanged();
         string newPatient = patient.PadRight(80, ' ');
         byte[] replacementBytes = Encoding.UTF8.GetBytes(newPatient);
 
-        const int bufferSize = 1024*256; // 
-        using var tempStream = new FileStream("tempfile.edf", FileMode.Create, FileAccess.ReadWrite);
+        const int bufferSize = 512*256;  
+        using var tempStream = new FileStream("Blazor-EDF.edf", FileMode.Create, FileAccess.ReadWrite);
 
         // Process the file in chunks
         byte[] buffer = new byte[bufferSize];
@@ -474,13 +653,9 @@ StateHasChanged();
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, (int) filesize);
         string base64String = Convert.ToBase64String(bytes);
         await JSRuntime.InvokeAsync<object>("saveBinary", header.filename , base64String);
+        return;
     }
 
-    public async void CtrlC()
-    {
-        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", txt);
-
-    }
 }
 
 @* End *@
