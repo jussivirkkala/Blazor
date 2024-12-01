@@ -120,7 +120,7 @@
     }
 
     </table>
-    @if (iAnnotatation1>0)
+    @if (iAnnotatation1>-1)
     {
     <button @onclick="listAnnotations">List (slow) and -annotations.txt</button>
     }
@@ -168,7 +168,7 @@ source code at <a href="https://github.hus.fi/KNF/Blazor-EDF">https://github.hus
     private long filesize = 0;
 
     private long calculatedsize=0;
-    private int iAnnotatation1=0;
+    private int iAnnotatation1=-1;
     private int iAnnotatation2=0;
     
 
@@ -216,7 +216,7 @@ source code at <a href="https://github.hus.fi/KNF/Blazor-EDF">https://github.hus
 
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
-        iAnnotatation1=0;
+        iAnnotatation1=-1;
         edfAnnotations.Clear();
         sError="";
 
