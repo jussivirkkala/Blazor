@@ -9,11 +9,13 @@ Use Ctrl+F5 to force refresh. Install as PWA by clicking icon in the end of brow
 
 ![EDF-1](EDF-0.png)
 
-Select EDF or BDF file e.g. from https://physionet.org/about/database/. Example https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf. Annotation example https://physionet.org/content/hmc-sleep-staging/1.1/recordings/SN001_sleepscoring.edf.
+Select EDF or BDF file e.g. from https://physionet.org/about/database/. Example https://physionet.org/content/siena-scalp-eeg/1.0.0/PN00/PN00-1.edf. 
 
 ![EDF-2](EDF-1.png)
 
-You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.edf.txt)
+You can copy header to clipboard or download as ascii [PN00-1.edf.txt](PN00-1.edf.txt). Annotation example https://physionet.org/content/hmc-sleep-staging/1.1/recordings/SN001_sleepscoring.edf.
+
+![EDF-3](EDF-2.png)
 
 # Code
 
