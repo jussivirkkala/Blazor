@@ -122,7 +122,7 @@
     </table>
     @if (iAnnotatation1>-1)
     {
-    <button @onclick="listAnnotations">List (slow) and -annotations.txt</button>
+    <button @onclick="listAnnotations">List (slow) and @(patient)-annotations.txt</button>
     }
 }
 
@@ -419,28 +419,24 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
             {
             switch (buffer2[j])
             {   
-
-
-
-
                 case 0: // end with 0
-                if (start.Length>0)
-                {
-                    edfAnnotation annotation=new edfAnnotation();
-                    annotation.start=start;
-                    annotation.duration=duration;
-                    annotation.label=label;                    
-                    label=label.Replace("\r","#");
-                    label=label.Replace("\n","#");
-                    edfAnnotations.Add(annotation);
-                    txt2 +=start+"\t"+duration+"\t"+label+"\n";
-//                    sAnnotations+=s+","+d+","+t+" - ";
-                    start="";
-                    duration="";
-                    label="";
-                }
-                else j=iAnnotatation2;
-                break;
+                    if (start.Length>0)
+                    {
+                        edfAnnotation annotation=new edfAnnotation();
+                        annotation.start=start;
+                        annotation.duration=duration;
+                        annotation.label=label;                    
+                        label=label.Replace("\r","#");
+                        label=label.Replace("\n","#");
+                        edfAnnotations.Add(annotation);
+                        txt2 +=start+"\t"+duration+"\t"+label+"\n";
+                        start="";
+                        duration="";
+                        label="";
+                    }
+                    else 
+                        j=iAnnotatation2;
+                    break;
 
                 case 20: // 
                     if (start=="")
@@ -450,23 +446,27 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
                     }
                     else
                     {   
-                        if (a!="")
-                        {
                         if (duration=="") // 20 after duration or in end of label 
-                            duration=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);
+                            {
+                                if (a=="") 
+                                    duration=a;
+                                else
+                                    duration=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);
+                            }
                         else
-                            label=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);;
-                        }
+                            {
+                                if (a=="") 
+                                    label=a;
+                                else
+                                    label=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);;
+                            }
                         a="";
                     }
                     break;
-
-
                 case 21: // first 21 when duration
                     start=a;
                     a="";
                     break;
-
                 default:                
                     if (a=="")
                         j1=j;
@@ -520,18 +520,18 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
 
 
                 case 0: // end with 0
-                if (start.Length>0)
-                {
-                    edfAnnotation annotation=new edfAnnotation();
-                    annotation.start=start;
-                    annotation.duration=duration;
-                    annotation.label=label;
-                    edfAnnotations.Add(annotation);
+                    if (start.Length>0)
+                    {
+                        edfAnnotation annotation=new edfAnnotation();
+                        annotation.start=start;
+                        annotation.duration=duration;
+                        annotation.label=label;
+                        edfAnnotations.Add(annotation);
 //                    sAnnotations+=s+","+d+","+t+" - ";
-                    start="";
-                    duration="";
-                    label="";
-                }
+                        start="";
+                        duration="";
+                        label="";
+                    }
                 break;
 
                 case 20: // 
