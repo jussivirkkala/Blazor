@@ -8,6 +8,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2024-12-02 Corrected duration.
     2024-12-01 List of annotations.
     2024-11-30 Annotations testing.
     2024-11-26 Working on annotations.
@@ -122,7 +123,7 @@
     </table>
     @if (iAnnotatation1>-1)
     {
-    <button @onclick="listAnnotations">List (slow) and @(patient)-annotations.txt</button>
+    <button @onclick="listAnnotations">List (slow) and @(header?.filename)-annotations.txt</button>
     }
 }
 
