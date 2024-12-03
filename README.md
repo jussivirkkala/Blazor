@@ -1,6 +1,6 @@
 # EDF
 
-v2024-12-02: .NET9 https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info and BDF header information.
+v2024-12-03: .NET9 https://blazor.net  WebAssembly (WASM) app to read EDF https://www.edfplus.info and BDF header information.
  Progressive web app (PWA) for offline use in desktop or mobile browser. File is analyzed locally.
 App is hosted at https://jussivirkkala.github.io/Blazor-EDF/ and
 source code at https://github.com/jussivirkkala/Blazor-EDF</a>. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND...
@@ -36,6 +36,7 @@ Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFi
 <script src="saveBinary.js"></script>
 <script src="saveStream.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
+...
 ```
 In [wwwroot/css/app.css](wwwroot/css/app.css) for mobile layout
 
@@ -51,26 +52,24 @@ body {
     overflow-y: scroll;
     overscroll-behavior: contain;
 }
+...
 ```
 
 </style>
-To publish app:
+Remove from wwwroot\service_worker.published.js integrity.
 
-```
-dotnet publish -c Release
-```
-Copy files from bin\Release\net9.0\publish\wwwroot into docs folder. Change correct folder 
-```
-<base href="https://jussivirkkala.github.io/Blazor-EDF/" />
-``` 
-in docs\index.html. Use \docs option in GitHub pages settings. You need empty .nojekyll file there.
-
-If you do above changes into wwwroot\index.html before publish following steps are not necessary for offline use:
-
-Remove from docs\service_worker.published.js integrity.  Notice that change in wwwroot\ disables local testing.
 ```
 .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
 ```
+Publish app with:
+```
+dotnet publish -c release
+```
+Copy files from bin\Release\net9.0\publish\wwwroot into docs folder. Change correct folder in docs\index.html e.g.
+```
+<base href="https://jussivirkkala.github.io/Blazor-EDF/" />
+``` 
 
+Use \docs option in GitHub pages settings. You need empty .nojekyll file there.
 
 End

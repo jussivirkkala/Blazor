@@ -8,6 +8,7 @@
 @*
     Displaying EDF file header information
     @jussivirkkala
+    2024-12-03 
     2024-12-02 Corrected duration.
     2024-12-01 List of annotations.
     2024-11-30 Annotations testing.
@@ -147,7 +148,7 @@
 }
 
 <br>
-v2024-12-02: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
+v2024-12-03: .NET9 <a href="https://blazor.net">https://blazor.net</a>  WebAssembly (WASM) app to read EDF
 <a href="https://www.edfplus.info/">https://www.edfplus.info/</a> and BDF header information.
  Progressive web app (PWA) for offline use in desktop or mobile browser. File is analyzed locally.
 App is hosted at <a href="https://jussivirkkala.github.io/Blazor-EDF/">https://github.com/jussivirkkala/Blazor-EDF</a> and
@@ -234,7 +235,7 @@ source code at <a href="https://github.com/jussivirkkala/Blazor-EDF">https://git
         await file.OpenReadStream(MAXSIZE).ReadAsync(bytes, 0, bytes.Length);
 
         const string LF = "\n"; // 2019-09-02 Remove 
-        txt = "v2024-12-02 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
+        txt = "v2024-12-03 Reading EDF, BDF header information https://github.com/jussivirkkala/Blazor-EDF" + LF;
         txt += "File\t" + header.filename + LF;
         string s;
         s = file.LastModified.ToLocalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss");
@@ -423,6 +424,12 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
                 case 0: // end with 0
                     if (start.Length>0)
                     {
+                        if (label.Length==0)
+                        {
+                            label=duration;
+                            duration="";
+
+                        }
                         edfAnnotation annotation=new edfAnnotation();
                         annotation.start=start;
                         annotation.duration=duration;
@@ -459,7 +466,8 @@ TAL '+1800.2 21 25.5 20 Apnea 20 0' codes a 25.5s apnea that begins 30 minutes a
                                 if (a=="") 
                                     label=a;
                                 else
-                                    label=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);;
+                                    label=System.Text.Encoding.UTF8.GetString(buffer2,j1,j-j1);
+                                // How to handle multiple 20 20     
                             }
                         a="";
                     }
