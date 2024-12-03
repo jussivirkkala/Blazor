@@ -24,7 +24,7 @@ There are minimal changes to default Blazor empty template. You can use .NET9 SD
 ```
 dotnet watch run
 ```
-Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script saveFiles.js  [wwwroot/index.html](wwwroot/index.html) for saving file. 
+Code and UI is in [Pages/Home.razor](Pages/Home.razor). Additional script e.g. saveFiles.js  [wwwroot/index.html](wwwroot/index.html) for saving file. 
 
 ```
 ...
@@ -55,7 +55,6 @@ body {
 ...
 ```
 
-</style>
 Remove from wwwroot\service_worker.published.js integrity.
 
 ```
